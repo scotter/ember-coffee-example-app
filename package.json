@@ -1,0 +1,27 @@
+{
+  "name": "ember-coffee-example-app",
+  "version": "0.0.0",
+  "description": "starter-kit ===========",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scotter/ember-coffee-example-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scotter/ember-coffee-example-app/issues"
+  },
+  "homepage": "https://github.com/scotter/ember-coffee-example-app",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-coffee": "*",
+    "gulp-livereload": "^1.2.0"
+  }
+}
