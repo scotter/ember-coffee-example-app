@@ -24,13 +24,20 @@
 
   <script type="text/x-handlebars" id="meetups">
 
+      <div class="col-sm-3">
+        {{#each controllers.filterList.content}}
+          {{view App.FilterView}}
+        {{/each}}
+      </div>
+
      <div class="col-sm-9">
+        <p class="lead">{{controllers.filterList.meetupCount}}</p>
         <ul class="list-group">
 
-          {{#each content}}
+          {{#each t in controllers.filterList.filteredContent}}
             <li class="list-group-item">
-              <h2>{{name}}</h2>
-              <p class="text-muted">{{{content}}}</p>
+              <h2>{{t.name}}</h2>
+              <p class="text-muted">{{{t.content}}}</p>
             </li>
           {{/each}}
 
@@ -40,12 +47,24 @@
   </script>
 
 
+  <script type="text/x-handlebars" id="filter">
+    <h3>{{field}}</h3>
+    <ul class="list-unstyled">
+      {{#each content}}
+        <li>
+          {{#view Ember.Checkbox checkedBinding='isActive'}}
+            {{value}}
+          {{/view}}
+        </li>
+      {{/each}}
+    </ul>
+  </script>
 
   <script src="js/libs/jquery-1.10.2.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <script src="js/libs/handlebars-1.1.2.js"></script>
   <script src="js/libs/ember-1.4.0.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app_complete.js"></script>
   <!-- to activate the test runner, add the "?test" query string parameter -->
   <script src="tests/runner.js"></script>
 </body>
