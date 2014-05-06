@@ -24,10 +24,17 @@
 
   <script type="text/x-handlebars" id="meetups">
 
+    <div class="col-sm-3">
+        {{#each controllers.filterList.content}}
+          {{view App.FilterView}}
+        {{/each}}
+      </div>
+
+
      <div class="col-sm-9">
         <ul class="list-group">
 
-          {{#each content}}
+          {{#each controllers.filterList.filteredContent}}
             <li class="list-group-item">
               <h2>{{name}}</h2>
               <p class="text-muted">{{{content}}}</p>
@@ -38,6 +45,20 @@
       </div>
 
   </script>
+
+
+    <script type="text/x-handlebars" id="filter">
+      <h3>{{field}}</h3>
+      <ul class="list-unstyled">
+      {{#each content}}
+        <li>
+          {{#view Ember.Checkbox checkedBinding='isActive'}}
+            {{value}}
+          {{/view}}
+        </li>
+      {{/each}}
+    </ul>
+    </script>
 
 
 

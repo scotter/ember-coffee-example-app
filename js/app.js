@@ -1,5 +1,6 @@
 (function() {
-  var meetups;
+  var meetups,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   window.App = Ember.Application.create();
 
@@ -15,7 +16,106 @@
     }
   });
 
-  App.MeetupsController = Ember.ArrayController.extend();
+  App.MeetupsController = Ember.ArrayController.extend({
+    needs: 'filterList',
+    updateFilters: (function() {
+      return this.get('controllers.filterList').updateFilters();
+    }).observes('content.@each')
+  });
+
+  App.FilterListController = Ember.ArrayController.extend({
+    needs: 'meetups',
+    fields: ['speakers', 'topics'],
+    updateFilters: function() {
+      var f, meetups, _i, _len, _ref, _results;
+      meetups = this.get('controllers.meetups').get('content');
+      _ref = this.get('fields');
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        f = _ref[_i];
+        _results.push(this.get('content').pushObject(App.FilterController.create({
+          field: f,
+          content: this.collectValues(meetups, f)
+        })));
+      }
+      return _results;
+    },
+    collectValues: function(data, key) {
+      var d, keys, _i, _len, _ref;
+      keys = [];
+      _ref = data.getEach(key);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        d = _ref[_i];
+        keys.pushObjects(d.split(','));
+      }
+      return keys.uniq().sort();
+    },
+    activeFilters: (function() {
+      return this.get('content').filter(function(i) {
+        return i.get('active').length > 0;
+      });
+    }).property('content.@each.active'),
+    filteredContent: (function() {
+      var f, meetups;
+      meetups = this.get('controllers.meetups').get('content');
+      if (this.get('activeFilters').length === 0) {
+        return meetups;
+      } else {
+        return f = meetups.filter((function(_this) {
+          return function(t) {
+            var i, tests, _i, _len, _ref;
+            tests = [];
+            _ref = _this.get('activeFilters');
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              f = _ref[_i];
+              i = _this.intersect(t[f.get('field')].split(','), f.get('active').getEach('value'));
+              console.log(i);
+              if (i.length > 0) {
+                tests.push(true);
+              }
+            }
+            return tests.length === _this.get('activeFilters').length;
+          };
+        })(this));
+      }
+    }).property('activeFilters'),
+    intersect: function(a, b) {
+      var value, _i, _len, _ref, _results;
+      if (a.length > b.length) {
+        _ref = [b, a], a = _ref[0], b = _ref[1];
+      }
+      _results = [];
+      for (_i = 0, _len = a.length; _i < _len; _i++) {
+        value = a[_i];
+        if (__indexOf.call(b, value) >= 0) {
+          _results.push(value);
+        }
+      }
+      return _results;
+    }
+  });
+
+  App.FilterController = Ember.ArrayController.extend({
+    init: function() {
+      this._super();
+      return this.set('content', this.get('content').map(function(k) {
+        return App.Filter.create({
+          value: k
+        });
+      }));
+    },
+    active: (function() {
+      return this.get('content').filter(function(i) {
+        return i.get('isActive');
+      });
+    }).property('content.@each.isActive')
+  });
+
+  App.Filter = Ember.Object.extend();
+
+  App.FilterView = Ember.View.extend({
+    templateName: 'filter'
+  });
 
   meetups = [
     {
